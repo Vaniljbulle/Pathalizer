@@ -1,0 +1,85 @@
+html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+canvas{
+    display: block;
+    position: absolute;
+    z-index: 0;
+}
+
+div.outer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 100px;
+    height: auto;
+    background: whitesmoke;
+    border: salmon 2px solid;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+}
+
+div {
+    margin: 3px;
+    padding: 3px;
+    border: 1px solid black;
+    background: white;
+    box-shadow: 0 0 5px 2px black;
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    margin: 3px;
+    padding: 3px;
+    border: 1px solid black;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0 0 5px 2px black;
+}
+
+button.active {
+    background: darkorange;
+    box-shadow: inset 0 0 5px 1px black;
+
+}
+
+button:hover {
+    background: darkgoldenrod;
+}
+
+button:active {
+    background: darkorange;
+}
+
+p {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3em;
+    font-weight: bold;
+    color: orange;
+    -webkit-text-stroke: 2px black;
+
+    animation: fadeOut 10s;
+    animation-fill-mode: forwards;
+    pointer-events: none;
+    user-select: none;
+
+
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

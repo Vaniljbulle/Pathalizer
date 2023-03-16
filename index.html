@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Path algorithm visualizer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="grid.js"></script>
+</head>
+<body>
+    <p>This is an infinite grid. Without an actual path it will hang exploring into the void. Hold scroll to pan around.</p>
+    <canvas id="canvas"></canvas>
+    <div class="outer">
+        <div id="btnContainer1">
+            <button id="start">Start</button>
+            <button id="reset">Reset</button>
+            <button id="clear">Clear</button>
+            <button id="random">Random</button>
+        </div>
+        <div id="btnContainer2">
+            <button id="wall" class="active" data-target="#wall">Wall Node</button>
+            <button id="startNode" data-target="#startNode">Start Node</button>
+            <button id="endNode" data-target="#endNode">End Node</button>
+        </div>
+        <div id="btnContainer3">
+            <button id="manhattan" class="active" data-target="#manhattan">Manhattan</button>
+            <button id="euclidean" data-target="#euclidean">Euclidean</button>
+        </div>
+        <div>
+            <!-- trackbar with value from 0 to 100 -->
+            Speed
+            <input id="speed" type="range" min="-1" max="1000" value="-1" step="50" />
+        </div>
+    </div>
+</body>
+</html>
