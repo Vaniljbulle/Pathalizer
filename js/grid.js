@@ -26,6 +26,26 @@ class Grid {
         window.addEventListener("resize", () => this.Repaint());
         this.#canvas.addEventListener("mousemove", (e) => this.#CanvasMouseMove(e));
         this.#canvas.addEventListener("click", (e) => this.#click(e));
+        this.#canvas.addEventListener("wheel", (e) => this.#zoom(e));
+    }
+
+    #zoom(e) {
+        let linesW = Math.floor(this.#canvas.width / this.#boxSize);
+        let linesH = Math.floor(this.#canvas.height / this.#boxSize);
+        if (e.deltaY < 0) {
+            this.#boxSize += 1;
+            if (this.#boxSize > 50) this.#boxSize = 50; else {
+                this.#panOffsetX -= linesW/2;
+                this.#panOffsetY -= linesH/2;
+            }
+        } else {
+            this.#boxSize -= 1;
+            if (this.#boxSize < 5) this.#boxSize = 5; else {
+                this.#panOffsetX += linesW/2;
+                this.#panOffsetY += linesH/2;
+            }
+        }
+        this.Repaint();
     }
 
     // Get start/end
