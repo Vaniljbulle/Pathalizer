@@ -6,7 +6,7 @@ const WALL_COLOR = "black"
 const START_COLOR = "green"
 const END_COLOR = "red"
 const PATH_COLOR = "darkblue"
-const EXPLORED_COLOR = "orange"
+const EXPLORED_COLOR = "rgba(255, 153, 80, 0.7)";
 
 
 function ChangeSpeed(e) {
@@ -35,37 +35,40 @@ window.addEventListener('load', () => {
 
         grid = new Grid();
         grid.Repaint();
+
+
+        message("Welcome to Pathalize!", 10)
+        setTimeout(() => {  message("You can navigate the grid by holding down the scroll wheel on your mouse and moving it to move the view around") }, 3000);
     }
 });
 
 function AlgoChanged() {
-    const oldMessage = document.querySelector(".message");
-    if (oldMessage) oldMessage.remove();
-
     const algorithm = document.getElementById("algorithm").value;
-    const p = document.createElement("p");
-    p.classList.add("message");
-
     switch (algorithm) {
         case "astar":
-            p.innerHTML = "A* is weighted, guaranteed to find the shortest path";
+            message("A* is weighted, guaranteed to find the shortest path", 5);
             break;
         case "dijkstra":
-            p.innerHTML = "Dijkstra is weighted, guaranteed to find the shortest path";
+            message("Dijkstra's algorithm is weighted, guaranteed to find the shortest path", 5);
             break;
         case "greedy":
-            p.innerHTML = "Greedy Best-First-Search is weighted, not guaranteed to find the shortest path";
-            break;
-        case "bfs":
-            p.innerHTML = "Breadth-First-Search is unweighted, not guaranteed to find the shortest path [Not implemented]";
-            break;
-        case "dfs":
-            p.innerHTML = "Depth-First-Search is unweighted, not guaranteed to find the shortest path [Not implemented]";
+            message("Greedy best first search is unweighted, not guaranteed to find the shortest path", 5);
             break;
     }
 
     document.body.appendChild(p);
 
+}
+
+function message(text, duration) {
+    const oldMessage = document.querySelector(".message");
+    if (oldMessage) oldMessage.remove();
+
+    const p = document.createElement("p");
+    p.classList.add("message");
+    p.innerHTML = text;
+    p.style.animationDuration = duration + "s";
+    document.body.appendChild(p);
 }
 
 function Pathalize() {
@@ -75,7 +78,18 @@ function Pathalize() {
     grid.setSpeed(document.getElementById("speed").value);
     const manhattan = document.querySelector("#btnContainer2 .active").id === "manhattan";
     const nodes = pf.GetPath(algorithm, manhattan, grid.getWalls());
-    if (nodes) grid.Animate(nodes);
+    if (nodes) {
+        grid.Animate(nodes);
+        if (nodes[0].length > 0) {
+            message("Path cell length: " + (1+nodes[0].length), 5);
+        }
+        else {
+            message("No path was found", 2);
+        }
+    }
+    else {
+        message("No start or end node", 2);
+    }
 }
 
 function Clear() {

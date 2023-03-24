@@ -103,7 +103,6 @@ class Grid {
                 }
             } else {
                 this.#PaintCells(this.#path, PATH_COLOR);
-                console.log("Done");
                 this.#finished = true;
             }
         }
@@ -188,10 +187,11 @@ class Grid {
 
         this.#PaintGrid();
         this.#PaintCells(this.#animatedNodes, EXPLORED_COLOR);
-        this.#PaintCells(this.#walls, WALL_COLOR);
 
         if (this.#nodesToAnimate.length === 0)
             this.#PaintCells(this.#path, PATH_COLOR);
+
+        this.#PaintCells(this.#walls, WALL_COLOR);
 
         // Paint start and end node
         if (this.#startNode) this.#PaintBox(this.#startNode.x, this.#startNode.y, START_COLOR);
@@ -204,7 +204,8 @@ class Grid {
     }
 
     #PaintGrid() {
-        if (this.#boxSize > 2) {
+        if (this.#boxSize > 5) {
+            this.#ctx.strokeStyle = `rgba(0, 0, 0, ${this.#boxSize / 50})`;
             this.#ctx.beginPath();
             for (let x = 0; x <= this.#canvas.width; x += this.#boxSize) {
                 this.#ctx.moveTo(x + .5 + this.#panOffsetX % this.#boxSize, 0);

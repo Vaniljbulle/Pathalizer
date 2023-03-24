@@ -61,16 +61,23 @@ class Pathfinder {
             explored.add(walls[i].toString());
         }
         explored.add(this.#startNode.toString());
-        frontier.push(this.#startNode);
 
+        // Virtual wall
+        explored = this.#virtualWall(explored);
+
+        frontier.push(this.#startNode);
+        let t1 = performance.now();
         while (frontier.length > 0) {
+            if (performance.now() - t1 > 5000) {
+                console.log("Pathfinding took too long");
+                return null;
+            }
             frontier.sort((a, b) => a.cost - b.cost);
             let current = frontier.shift();
 
             // Found path
             if (current.x === this.#endNode.x && current.y === this.#endNode.y) {
                 // Found the end node
-                console.log("Found end node");
                 console.log("Path length: " + current.accruedCost);
                 let pathNode = current;
                 while (pathNode.x !== this.#startNode.x || pathNode.y !== this.#startNode.y) {
@@ -80,7 +87,7 @@ class Pathfinder {
                 nodeOrder.shift();
                 nodeOrder.pop();
                 path.shift();
-                return [path, nodeOrder];
+                break;
             }
 
             // Path finding
@@ -97,5 +104,63 @@ class Pathfinder {
                 }
             }
         }
+
+        if (path.length === 0) nodeOrder.shift();
+        return [path, nodeOrder];
+    }
+
+    #virtualWall(explored) {
+        explored.add(this.#endNode.x + "," + this.#endNode.y);
+        let bounds = this.#getBounds(explored);
+        explored.delete(this.#endNode.x + "," + this.#endNode.y);
+
+        if ((bounds.maxX - bounds.minX) * (bounds.maxY - bounds.minY) < 15000) {
+            let xDiff = bounds.maxX - bounds.minX;
+            let yDiff = bounds.maxY - bounds.minY;
+            let currentArea = xDiff * yDiff;
+            let scalingFactor = Math.sqrt(15000 / currentArea);
+            let amountToExpand = {
+                x: Math.trunc(xDiff * 0.5 * (scalingFactor - 1)),
+                y: Math.trunc(yDiff * 0.5 * (scalingFactor - 1))
+            };
+            bounds.minX -= amountToExpand.x;
+            bounds.minY -= amountToExpand.y;
+            bounds.maxX += amountToExpand.x;
+            bounds.maxY += amountToExpand.y;
+        }
+        console.log("Grid area: " + (bounds.maxX - bounds.minX) * (bounds.maxY - bounds.minY));
+        for (let i = bounds.minX; i <= bounds.maxX; i++) {
+            explored.add(i + "," + bounds.minY);
+            explored.add(i + "," + bounds.maxY);
+        }
+        for (let i = bounds.minY; i <= bounds.maxY; i++) {
+            explored.add(bounds.minX + "," + i);
+            explored.add(bounds.maxX + "," + i);
+        }
+
+        return explored;
+    }
+
+    #getBounds(explored) {
+        let minX = -999999;
+        let maxX = -999999;
+        let minY = -999999;
+        let maxY = -999999;
+        for (let node of explored) {
+            let x = node.split(",")[0];
+            let y = node.split(",")[1];
+
+            if (minX === -999999) {
+                minX = x;
+                maxX = x;
+                minY = y;
+                maxY = y;
+            }
+            if (x <= minX) minX = parseInt(x)-1;
+            if (x >= maxX) maxX = parseInt(x)+1;
+            if (y <= minY) minY = parseInt(y)-1;
+            if (y >= maxY) maxY = parseInt(y)+1;
+        }
+        return {minX, maxX, minY, maxY};
     }
 }
