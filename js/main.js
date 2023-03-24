@@ -27,6 +27,7 @@ window.addEventListener('load', () => {
         // Button events
         document.getElementById("btnContainer2").addEventListener("click", (e) => { btn(e) });
         document.getElementById("btnContainer3").addEventListener("click", (e) => { btn(e) });
+        document.getElementById("btnContainer4").addEventListener("click", (e) => { btn(e) });
         document.getElementById("clear").addEventListener("click", () => { Clear() });
         document.getElementById("reset").addEventListener("click", () => { Reset() });
         document.getElementById("start").addEventListener("click", () => { Pathalize() });
@@ -57,7 +58,6 @@ function AlgoChanged() {
     }
 
     document.body.appendChild(p);
-
 }
 
 function message(text, duration) {
@@ -76,8 +76,9 @@ function Pathalize() {
     grid.reset();
     const pf = new Pathfinder(grid.getStartNode(), grid.getEndNode());
     grid.setSpeed(document.getElementById("speed").value);
-    const manhattan = document.querySelector("#btnContainer2 .active").id === "manhattan";
-    const nodes = pf.GetPath(algorithm, manhattan, grid.getWalls());
+    const manhattan = document.querySelector("#btnContainer3 .active").id === "manhattan";
+    const ordinal = document.querySelector("#btnContainer4 .active").id === "ordinal";
+    const nodes = pf.GetPath(algorithm, manhattan, grid.getWalls(), ordinal);
     if (nodes) {
         grid.Animate(nodes);
         if (nodes[0].length > 0) {

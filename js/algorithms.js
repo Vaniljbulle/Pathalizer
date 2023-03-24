@@ -12,14 +12,14 @@ class Pathfinder {
     * @param {Array} walls - The walls in the grid
     * @returns {Array, Array} - The path from start to end and explored nodes
      */
-    GetPath(algo, manhattan, walls) {
+    GetPath(algo, manhattan, walls, ordinal = false) {
         switch (algo) {
             case "astar":
-                return this.#Pathfinder(1, manhattan, walls);
+                return this.#Pathfinder(1, manhattan, walls, false, ordinal);
             case "greedy":
-                return this.#Pathfinder(0, manhattan, walls);
+                return this.#Pathfinder(0, manhattan, walls, false, ordinal);
             case "dijkstra":
-                return this.#Pathfinder(1, manhattan, walls, true);
+                return this.#Pathfinder(1, manhattan, walls, true, ordinal);
         }
     }
 
@@ -30,24 +30,36 @@ class Pathfinder {
             return Math.sqrt(Math.pow(x - this.#endNode.x, 2) + Math.pow(y - this.#endNode.y, 2));
     }
 
-    #GetNeighbors(current, manhattan, weight, dijkstra) {
-        let r_ne, l_ne, u_ne, d_ne;
-        if (dijkstra){
-            r_ne = new Node(current.x + 1, current.y, current.accruedCost + weight, 0);
-            l_ne = new Node(current.x - 1, current.y, current.accruedCost + weight, 0);
-            u_ne = new Node(current.x, current.y - 1, current.accruedCost + weight, 0);
-            d_ne = new Node(current.x, current.y + 1, current.accruedCost + weight, 0);
-        } else {
-            r_ne = new Node(current.x + 1, current.y, current.accruedCost + weight, this.#Heuristic(current.x + 1, current.y, manhattan));
-            l_ne = new Node(current.x - 1, current.y, current.accruedCost + weight, this.#Heuristic(current.x - 1, current.y, manhattan));
-            u_ne = new Node(current.x, current.y - 1, current.accruedCost + weight, this.#Heuristic(current.x, current.y - 1, manhattan));
-            d_ne = new Node(current.x, current.y + 1, current.accruedCost + weight, this.#Heuristic(current.x, current.y + 1, manhattan));
+    #GetNeighbors(current, manhattan, weight, dijkstra, ordinal = false) {
+        let directions = [
+            { x: 1, y: 0, diagonal: false },
+            { x: -1, y: 0, diagonal: false },
+            { x: 0, y: -1, diagonal: false },
+            { x: 0, y: 1, diagonal: false },
+        ];
+        if (ordinal) {
+            directions.push(
+                { x: -1, y: -1, diagonal: true },
+                { x: 1, y: -1, diagonal: true },
+                { x: -1, y: 1, diagonal: true },
+                { x: 1, y: 1, diagonal: true });
         }
 
-        return [r_ne, l_ne, u_ne, d_ne];
+        let nodes = [];
+
+        for (let direction of directions) {
+            let x = current.x + direction.x;
+            let y = current.y + direction.y;
+            let diagonalCost = direction.diagonal ? weight*1.4 : weight;
+            let heuristic = dijkstra ? 0 : this.#Heuristic(x, y, manhattan);
+            let node = new Node(x, y, current.accruedCost + diagonalCost, heuristic);
+            nodes.push(node);
+        }
+
+        return nodes;
     }
 
-    #Pathfinder(weight = 2, manhattan, walls, dijkstra = false) {
+    #Pathfinder(weight = 2, manhattan, walls, dijkstra = false, ordinal = false) {
         if (!this.#startNode || !this.#endNode) {
             console.log("No start or end node");
             return null;
@@ -93,7 +105,7 @@ class Pathfinder {
             // Path finding
             nodeOrder.push([current.x, current.y]);
 
-            let neighbors = this.#GetNeighbors(current, manhattan, weight, dijkstra);
+            let neighbors = this.#GetNeighbors(current, manhattan, weight, dijkstra, ordinal);
             for (let i = 0; i < neighbors.length; i++) {
                 let neighbor = neighbors[i];
                 if (!explored.has(neighbor.toString())) {
