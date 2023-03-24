@@ -168,10 +168,10 @@ class Pathfinder {
                 minY = y;
                 maxY = y;
             }
-            if (x <= minX) minX = parseInt(x)-1;
-            if (x >= maxX) maxX = parseInt(x)+1;
-            if (y <= minY) minY = parseInt(y)-1;
-            if (y >= maxY) maxY = parseInt(y)+1;
+            if (x <= minX) minX = parseInt(x)-50;
+            if (x >= maxX) maxX = parseInt(x)+50;
+            if (y <= minY) minY = parseInt(y)-50;
+            if (y >= maxY) maxY = parseInt(y)+50;
         }
         return {minX, maxX, minY, maxY};
     }

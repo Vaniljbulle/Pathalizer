@@ -108,14 +108,30 @@ class Grid {
         }
     }
 
+    #oldMousePosition;
     // Button event
     #CanvasMouseMove(e) {
         if (e.buttons === 1) { // Left mouse button
-            this.#click(e);
+            let currentMousePos = [e.clientX, e.clientY];
+            // If distance is larger than box size, interpolate points accoring to box size
+            if (Math.abs(currentMousePos[0] - this.#oldMousePosition[0]) > this.#boxSize ||
+                Math.abs(currentMousePos[1] - this.#oldMousePosition[1]) > this.#boxSize) {
+                let dx = currentMousePos[0] - this.#oldMousePosition[0];
+                let dy = currentMousePos[1] - this.#oldMousePosition[1];
+                let steps = Math.max(Math.abs(dx), Math.abs(dy)) / this.#boxSize;
+                let xStep = dx / steps;
+                let yStep = dy / steps;
+                for (let i = 0; i < steps; i++) {
+                    this.#click({clientX: Math.trunc(this.#oldMousePosition[0] + xStep * i), clientY: Math.trunc(this.#oldMousePosition[1] + yStep * i)});
+                }
+            }else {
+                this.#click(e);
+            }
         }
         if (e.buttons === 4) { // Scroll wheel button
             this.#pan(e.movementX, e.movementY);
         }
+        this.#oldMousePosition = [e.clientX, e.clientY];
     }
 
     // Panning the grid
